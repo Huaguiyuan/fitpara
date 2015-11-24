@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N TB_fit_try3
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=48:30:00
+#PBS -q submit
+#PBS -j oe
+#PBS -o mpi.out
+#PBS -e mpi.err
+#PBS -V
+module load intel_env/default
+
+CPUS=`cat $PBS_NODEFILE|wc -l`
+
+NP=${NCPUS}
+export MKL_NUM_THREADS=${NP}
+export OMP_NUM_THREADS=${NP}
+export GOTO_NUM_THREADS=${NP}
+
+#MATLAB=/public/software/MATLAB/R2013a/bin/matlab
+exe=../src/fit_para.x
+
+cd $PBS_O_WORKDIR
+
+${exe} 10000 > fit.log
+
+#mpirun --mca btl openib,self,sm -n ${CPUS} ${exe} 10000 > fit_para.log
